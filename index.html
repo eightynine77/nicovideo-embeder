@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nicovideo embedder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap" role="main">
+    <header>
+      <label for="nicoinput">Paste a NicoNico link or watch ID (e.g. <code>https://www.nicovideo.jp/watch/sm1234567</code> or <code>sm1234567</code>)</label>
+      <div class="controls">
+        <input id="nicoinput" type="text" placeholder="Paste NicoNico link or ID here…" />
+        <button id="embedBtn" type="button">Embed</button>
+      </div>
+      <div class="hint">Supports links like <code>https://www.nicovideo.jp/watch/sm1234567</code>, short links like <code>https://nico.ms/sm1234567</code>, or plain IDs like <code>sm1234567</code>.</div>
+    </header>
+
+    <section>
+      <div id="playerArea" class="video-wrapper" aria-live="polite">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ddd;font-size:0.95rem;">
+          paste a NicoNico link and press Embed
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="open-link" id="openLink"></div>
+        <div class="error" id="errorMsg" aria-live="assertive"></div>
+      </div>
+    </section>
+  </main>
+  <script src="javascript.js"></script>
+</body>
+</html>

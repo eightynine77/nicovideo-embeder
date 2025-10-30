@@ -1,0 +1,87 @@
+  :root{
+    --max-width:900px;
+    --gap:12px;
+  }
+  body{
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    margin:24px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:var(--max-width);
+    box-sizing:border-box;
+  }
+
+  header{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:var(--gap);
+  }
+
+  label{ font-weight:600; font-size:0.95rem; }
+  .controls{
+    display:flex;
+    gap:8px;
+  }
+
+  input[type="text"]{
+    flex:1;
+    padding:10px 12px;
+    font-size:1rem;
+    border:1px solid #bbb;
+    border-radius:8px;
+    outline:none;
+  }
+  input[type="text"]:focus{ box-shadow:0 0 0 3px rgba(0,120,255,0.08); border-color:#6aa3ff; }
+
+  button{
+    padding:10px 14px;
+    font-size:1rem;
+    border-radius:8px;
+    border:1px solid #1976d2;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
+  }
+  button:active{ transform:translateY(1px); }
+  .hint{ font-size:0.85rem; color:#666; margin-top:6px; }
+  .video-wrapper{
+    width:100%;
+    aspect-ratio: 16 / 9;
+    background:#000;
+    position:relative;
+    overflow:hidden;
+    border-radius:8px;
+    box-shadow:0 6px 18px rgba(10,10,10,0.08);
+  }
+
+  .video-wrapper iframe,
+  .video-wrapper embed,
+  .video-wrapper object,
+  .video-wrapper video {
+    position:absolute !important;
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+    border:0 !important;
+  }
+
+  @media (max-width:420px){
+    input[type="text"]{ font-size:0.95rem; padding:8px 10px; }
+    button{ padding:8px 10px; font-size:0.95rem; }
+  }
+
+  .meta{
+    margin-top:8px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .open-link a{ color:#1976d2; text-decoration:none; }
+  .error{ color:#b00020; font-weight:600; }
