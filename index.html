@@ -12,7 +12,10 @@
       <label for="nicoinput">Paste a NicoNico link or watch ID (e.g. <code>https://www.nicovideo.jp/watch/sm1234567</code> or <code>sm1234567</code>)</label>
       <div class="controls">
         <input id="nicoinput" type="text" placeholder="Paste NicoNico link or ID here…" />
-        <button id="embedBtn" type="button">Embed</button>
+        <div class="btn-group">
+          <button id="pasteBtn" type="button" title="Paste from clipboard and embed">Paste and Embed</button>
+          <button id="embedBtn" type="button">Embed</button>
+        </div>
       </div>
       <div class="hint">Supports links like <code>https://www.nicovideo.jp/watch/sm1234567</code>, short links like <code>https://nico.ms/sm1234567</code>, or plain IDs like <code>sm1234567</code>.</div>
     </header>
@@ -26,7 +29,6 @@
 
       <div class="meta">
         <div class="open-link" id="openLink"></div>
-        <div class="error" id="errorMsg" aria-live="assertive"></div>
       </div>
     </section>
   </main>

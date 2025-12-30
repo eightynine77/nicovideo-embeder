@@ -26,6 +26,7 @@
   .controls{
     display:flex;
     gap:8px;
+    align-items: stretch;
   }
 
   input[type="text"]{
@@ -36,10 +37,22 @@
     border-radius:8px;
     outline:none;
   }
+
   input[type="text"]:focus{ box-shadow:0 0 0 3px rgba(0,120,255,0.08); border-color:#6aa3ff; }
 
-  button{
-    padding:10px 14px;
+.btn-group {
+  display: flex;
+  flex-direction: column; 
+  gap: 4px; 
+  min-width: 140px; 
+}
+
+button{
+  display: flex;
+  flex: 1; 
+  padding: 8px 14px;
+  align-items: center;
+  justify-content: center;
     font-size:1rem;
     border-radius:8px;
     border:1px solid #1976d2;
@@ -73,6 +86,15 @@
   @media (max-width:420px){
     input[type="text"]{ font-size:0.95rem; padding:8px 10px; }
     button{ padding:8px 10px; font-size:0.95rem; }
+
+    .controls{
+      flex-direction: column;
+    }
+
+    .btn-group {
+      flex-direction: row; 
+      height: auto;
+    }
   }
 
   .meta{
@@ -83,5 +105,15 @@
     align-items:center;
     flex-wrap:wrap;
   }
-  .open-link a{ color:#1976d2; text-decoration:none; }
-  .error{ color:#b00020; font-weight:600; }
+  
+  .open-link a{ 
+    color:#1976d2; 
+    text-decoration:none; 
+  }
+  
+  .error{ 
+    background-color: #ffffff;
+    padding: 0.5rem;
+    color:#e62929; 
+    font-weight:600;
+  }

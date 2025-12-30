@@ -1,8 +1,8 @@
 const input = document.getElementById('nicoinput');
 const btn = document.getElementById('embedBtn');
+const pasteBtn = document.getElementById('pasteBtn')
 const playerArea = document.getElementById('playerArea');
 const openLinkWrap = document.getElementById('openLink');
-const errorMsg = document.getElementById('errorMsg');
 
 function extractWatchId(text){
   if(!text) return null;
@@ -23,11 +23,14 @@ function extractWatchId(text){
 function clearPlayer(){
   playerArea.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ddd;font-size:0.95rem;">paste a NicoNico link and press Embed</div>';
   openLinkWrap.innerHTML = '';
-  errorMsg.textContent = '';
+}
+
+function showInPlayerError(msg) {
+  playerArea.innerHTML = `<div class="error">${msg}</div>`;
+  openLinkWrap.innerHTML = '';
 }
 
 function embedNico(id){
-  errorMsg.textContent = '';
   playerArea.innerHTML = '';
   const script = document.createElement('script');
   script.type = 'application/javascript';
@@ -43,10 +46,26 @@ btn.addEventListener('click', () => {
   const val = input.value;
   const id = extractWatchId(val);
   if(!id){
-    errorMsg.textContent = 'Could not find a valid NicoNico watch ID in that input.';
+    showInPlayerError('not a valid nicovideo video link or ID');
     return;
   }
   embedNico(id);
+});
+
+pasteBtn.addEventListener('click', async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    input.value = text; 
+    
+    const id = extractWatchId(text);
+    if(!id){
+      showInPlayerError('not a valid nicovideo video link or ID');
+      return;
+    }
+    embedNico(id);
+  } catch (err) {
+    showInPlayerError('Failed to paste link. Please paste manually.');
+  }
 });
 
 input.addEventListener('keydown', (ev) => {

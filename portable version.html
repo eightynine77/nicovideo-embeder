@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>nicovideo embeder</title>
 <style>
-  :root{
+    :root{
     --max-width:900px;
     --gap:12px;
   }
@@ -33,6 +33,7 @@
   .controls{
     display:flex;
     gap:8px;
+    align-items: stretch;
   }
 
   input[type="text"]{
@@ -43,10 +44,22 @@
     border-radius:8px;
     outline:none;
   }
+
   input[type="text"]:focus{ box-shadow:0 0 0 3px rgba(0,120,255,0.08); border-color:#6aa3ff; }
 
-  button{
-    padding:10px 14px;
+.btn-group {
+  display: flex;
+  flex-direction: column; 
+  gap: 4px; 
+  min-width: 140px; 
+}
+
+button{
+  display: flex;
+  flex: 1; 
+  padding: 8px 14px;
+  align-items: center;
+  justify-content: center;
     font-size:1rem;
     border-radius:8px;
     border:1px solid #1976d2;
@@ -80,6 +93,15 @@
   @media (max-width:420px){
     input[type="text"]{ font-size:0.95rem; padding:8px 10px; }
     button{ padding:8px 10px; font-size:0.95rem; }
+
+    .controls{
+      flex-direction: column;
+    }
+
+    .btn-group {
+      flex-direction: row; 
+      height: auto;
+    }
   }
 
   .meta{
@@ -90,8 +112,18 @@
     align-items:center;
     flex-wrap:wrap;
   }
-  .open-link a{ color:#1976d2; text-decoration:none; }
-  .error{ color:#b00020; font-weight:600; }
+  
+  .open-link a{ 
+    color:#1976d2; 
+    text-decoration:none; 
+  }
+  
+  .error{ 
+    background-color: #ffffff;
+    padding: 0.5rem;
+    color:#e62929; 
+    font-weight:600;
+  }
 </style>
 </head>
 <body>
@@ -100,7 +132,10 @@
       <label for="nicoinput">Paste a NicoNico link or watch ID (e.g. <code>https://www.nicovideo.jp/watch/sm1234567</code> or <code>sm1234567</code>)</label>
       <div class="controls">
         <input id="nicoinput" type="text" placeholder="Paste NicoNico link or ID here…" />
-        <button id="embedBtn" type="button">Embed</button>
+        <div class="btn-group">
+          <button id="pasteBtn" type="button" title="Paste from clipboard and embed">Paste and Embed</button>
+          <button id="embedBtn" type="button">Embed</button>
+        </div>
       </div>
       <div class="hint">Supports links like <code>https://www.nicovideo.jp/watch/sm1234567</code>, short links like <code>https://nico.ms/sm1234567</code>, or plain IDs like <code>sm1234567</code>.</div>
     </header>
@@ -114,84 +149,101 @@
 
       <div class="meta">
         <div class="open-link" id="openLink"></div>
-        <div class="error" id="errorMsg" aria-live="assertive"></div>
       </div>
     </section>
   </main>
 <script>
 (function(){
   const input = document.getElementById('nicoinput');
-  const btn = document.getElementById('embedBtn');
-  const playerArea = document.getElementById('playerArea');
-  const openLinkWrap = document.getElementById('openLink');
-  const errorMsg = document.getElementById('errorMsg');
+const btn = document.getElementById('embedBtn');
+const pasteBtn = document.getElementById('pasteBtn')
+const playerArea = document.getElementById('playerArea');
+const openLinkWrap = document.getElementById('openLink');
 
-  function extractWatchId(text){
-    if(!text) return null;
-    text = text.trim();
-    const patterns = [
-      /(?:https?:\/\/)?(?:www\.)?nicovideo\.jp\/watch\/((?:sm|nm|so)\d+)/i,
-      /(?:https?:\/\/)?nico\.ms\/((?:sm|nm|so)\d+)/i,
-      /^((?:sm|nm|so)\d+)$/i
-    ];
-    for(const p of patterns){
-      const m = text.match(p);
-      if(m) return m[1];
-    }
-    const m = text.match(/(sm|nm|so)\d+/i);
-    return m ? m[0] : null;
+function extractWatchId(text){
+  if(!text) return null;
+  text = text.trim();
+  const patterns = [
+    /(?:https?:\/\/)?(?:www\.)?nicovideo\.jp\/watch\/((?:sm|nm|so)\d+)/i,
+    /(?:https?:\/\/)?nico\.ms\/((?:sm|nm|so)\d+)/i,
+    /^((?:sm|nm|so)\d+)$/i
+  ];
+  for(const p of patterns){
+    const m = text.match(p);
+    if(m) return m[1];
   }
+  const m = text.match(/(sm|nm|so)\d+/i);
+  return m ? m[0] : null;
+}
 
-  function clearPlayer(){
-    playerArea.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ddd;font-size:0.95rem;">paste a NicoNico link and press Embed</div>';
-    openLinkWrap.innerHTML = '';
-    errorMsg.textContent = '';
+function clearPlayer(){
+  playerArea.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ddd;font-size:0.95rem;">paste a NicoNico link and press Embed</div>';
+  openLinkWrap.innerHTML = '';
+}
+
+function showInPlayerError(msg) {
+  playerArea.innerHTML = `<div class="error">${msg}</div>`;
+  openLinkWrap.innerHTML = '';
+}
+
+function embedNico(id){
+  playerArea.innerHTML = '';
+  const script = document.createElement('script');
+  script.type = 'application/javascript';
+  script.src = `https://embed.nicovideo.jp/watch/${encodeURIComponent(id)}/script?w=320&h=180`;
+  playerArea.appendChild(script);
+  const nos = document.createElement('noscript');
+  nos.innerHTML = `<a href="https://www.nicovideo.jp/watch/${encodeURIComponent(id)}">Open on NicoNico — ${id}</a>`;
+  playerArea.appendChild(nos);
+  openLinkWrap.innerHTML = `<a href="https://www.nicovideo.jp/watch/${encodeURIComponent(id)}" target="_blank" rel="noopener noreferrer">Open on NicoNico — ${id}</a>`;
+}
+
+btn.addEventListener('click', () => {
+  const val = input.value;
+  const id = extractWatchId(val);
+  if(!id){
+    showInPlayerError('not a valid nicovideo video link or ID');
+    return;
   }
+  embedNico(id);
+});
 
-  function embedNico(id){
-    errorMsg.textContent = '';
-    playerArea.innerHTML = '';
-    const script = document.createElement('script');
-    script.type = 'application/javascript';
-    script.src = `https://embed.nicovideo.jp/watch/${encodeURIComponent(id)}/script?w=320&h=180`;
-    playerArea.appendChild(script);
-    const nos = document.createElement('noscript');
-    nos.innerHTML = `<a href="https://www.nicovideo.jp/watch/${encodeURIComponent(id)}">Open on NicoNico — ${id}</a>`;
-    playerArea.appendChild(nos);
-    openLinkWrap.innerHTML = `<a href="https://www.nicovideo.jp/watch/${encodeURIComponent(id)}" target="_blank" rel="noopener noreferrer">Open on NicoNico — ${id}</a>`;
-  }
-
-  btn.addEventListener('click', () => {
-    const val = input.value;
-    const id = extractWatchId(val);
+pasteBtn.addEventListener('click', async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    input.value = text; 
+    
+    const id = extractWatchId(text);
     if(!id){
-      errorMsg.textContent = 'Could not find a valid NicoNico watch ID in that input.';
+      showInPlayerError('not a valid nicovideo video link or ID');
       return;
     }
     embedNico(id);
-  });
+  } catch (err) {
+    showInPlayerError('Failed to paste link. Please paste manually.');
+  }
+});
 
-  input.addEventListener('keydown', (ev) => {
-    if(ev.key === 'Enter'){
-      ev.preventDefault();
-      btn.click();
+input.addEventListener('keydown', (ev) => {
+  if(ev.key === 'Enter'){
+    ev.preventDefault();
+    btn.click();
+  }
+  if(ev.key === 'Escape'){
+    input.value = '';
+    clearPlayer();
+  }
+});
+
+input.addEventListener('paste', (ev) => {
+  setTimeout(() => {
+    const id = extractWatchId(input.value || '');
+    if(id){
+      embedNico(id);
     }
-    if(ev.key === 'Escape'){
-      input.value = '';
-      clearPlayer();
-    }
-  });
-
-  input.addEventListener('paste', (ev) => {
-    setTimeout(() => {
-      const id = extractWatchId(input.value || '');
-      if(id){
-        embedNico(id);
-      }
-    }, 10);
-  });
-  clearPlayer();
-
+  }, 10);
+});
+clearPlayer();
 })();
 </script>
 </body>
